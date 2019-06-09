@@ -95,7 +95,10 @@ public class SnakeFrame extends JFrame{
             //Initialize timer
             timer = new Timer(TIME_DELAY, this);
             timer.setInitialDelay(0);
-            
+
+            //Initialize nextDir
+            nextDir = manager.getSnakeDirection();
+
             //Key listener
             KeyAdapter keyListener = new KeyAdapter(){
                 public void keyPressed(KeyEvent keyEv){
@@ -115,10 +118,6 @@ public class SnakeFrame extends JFrame{
                                 break;
                         }
                     }
-                    if( Directions.isValidTurn(manager.getSnakeDirection(),
-                                               nextDir) ){
-                        manager.setSnakeDirection(nextDir);
-                    }
                 }
             };
             display.addKeyListener( keyListener );
@@ -131,6 +130,12 @@ public class SnakeFrame extends JFrame{
          * @param timerEv timer event that triggerd actionPerformed
          */
         public void actionPerformed(ActionEvent timerEv){
+            //Update the snake direction
+            if( Directions.isValidTurn(manager.getSnakeDirection(),
+                    nextDir) ){
+                manager.setSnakeDirection(nextDir);
+            }
+            //Update
             TurnSummary thisTurn = manager.update();
             switch( thisTurn.status ){
                 case EMPTY:
