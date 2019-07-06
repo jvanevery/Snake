@@ -17,17 +17,21 @@ public class SnakeDisplay extends JPanel{
 
     /** Sprite sheet path */
     private static final String SPRITE_SHEET_PATH_NAME = "sprite_assets.png";
+
+    /** Tile draw width and height */
+    private static final int TILE_DRAW_LENGTH = 30;
+
     /** Draw width */
-    private static final int DRAW_WIDTH = 600;
+    private final int drawWidth;
 
     /** Draw height */
-    private static final int DRAW_HEIGHT = 600;
+    private final int drawHeight;
 
     /** Tile width of a square in the drawing of the game board */
-    private final int tileWidth;
+    //private final int tileWidth;
 
     /** Tile width of a square in the drawing of the game board */
-    private final int tileHeight;
+    //private final int tileHeight;
 
     /** Reference to GameManager used in SnakeFrame */
     private GameManager manager;
@@ -67,10 +71,10 @@ public class SnakeDisplay extends JPanel{
      */
     public SnakeDisplay(GameManager manager){
         this.manager = manager;
-        setPreferredSize(new Dimension(DRAW_WIDTH, DRAW_HEIGHT));
+        drawWidth = TILE_DRAW_LENGTH*manager.getGridWidth();
+        drawHeight = TILE_DRAW_LENGTH*manager.getGridHeight();
+        setPreferredSize(new Dimension(drawWidth, drawHeight));
         setBackground(Color.BLACK);
-        this.tileWidth = DRAW_WIDTH/manager.getGridWidth();
-        this.tileHeight = DRAW_HEIGHT/manager.getGridHeight();
     }
 
     @Override
@@ -92,30 +96,31 @@ public class SnakeDisplay extends JPanel{
             int y0 = 0;
             for(Coordinate coorObj : obj.getCoordinates()){
                 String coorType = coorObj.toString();
-                x0 = tileWidth*((int)coorObj.getX());
-                y0 = tileHeight*((int)coorObj.getY());
+                x0 = TILE_DRAW_LENGTH*((int)coorObj.getX());
+                y0 = TILE_DRAW_LENGTH*((int)coorObj.getY());
                 if(!coorType.equals("f")){
                     switch(coorType){
                         case "S":
                             g.setColor(snakeHeadColor);
-                            g.fillRect(x0,y0,tileWidth,tileHeight);
+                            g.fillRect(x0,y0,TILE_DRAW_LENGTH,TILE_DRAW_LENGTH);
                             break;
                         case "s":
                             g.setColor(snakeColor);
-                            g.drawRect(x0,y0,tileWidth,tileHeight);
+                            g.drawRect(x0,y0,TILE_DRAW_LENGTH,TILE_DRAW_LENGTH);
                             break;
                     }                            
                 }
 
                 if(coorType.equals("f")){
                     int foodIndex = ((Food)obj).getID();
-                    g.drawImage(foodImages[foodIndex], x0, y0, tileWidth, 
-                                tileHeight , null);
+                    g.drawImage(foodImages[foodIndex], x0, y0, TILE_DRAW_LENGTH,
+                                TILE_DRAW_LENGTH , null);
                 }
                 else if(coorType.equals("X")){
                     //TODO make reliable way to get same images for walls
                     int wallIndex = (int)(coorObj.getX() + coorObj.getY())%NUM_WALL_IMAGES;
-                    g.drawImage(wallImages[wallIndex], x0, y0, tileWidth, tileHeight, null);
+                    g.drawImage(wallImages[wallIndex], x0, y0, TILE_DRAW_LENGTH,
+                            TILE_DRAW_LENGTH, null);
                 }
             }
         }
