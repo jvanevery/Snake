@@ -2,10 +2,6 @@ import java.util.List;
 import java.lang.Math;
 import java.awt.*;
 import javax.swing.*;
-import java.io.IOException;
-import java.io.*;
-import java.awt.image.*;
-import javax.imageio.*;
 
 /**
  * @author jordan vanevery
@@ -14,9 +10,6 @@ import javax.imageio.*;
  */
 
 public class SnakeDisplay extends JPanel{
-
-    /** Sprite sheet path */
-    private static final String SPRITE_SHEET_PATH_NAME = "sprite_assets.png";
 
     /** Tile draw width and height */
     private static final int TILE_DRAW_LENGTH = 30;
@@ -36,32 +29,14 @@ public class SnakeDisplay extends JPanel{
     /** Reference to GameManager used in SnakeFrame */
     private GameManager manager;
 
-    
+    /** Sprite Manager */
+    private SpriteManager spriteManager;
+
     /** Number of food images */
     public static final int NUM_FOOD_TYPES = 4;
 
     /** Number of wall images */
     public static final int NUM_WALL_IMAGES = 3;
-
-    /** Load sprite sheet */
-    private BufferedImage imageSheet = getImage( SPRITE_SHEET_PATH_NAME );
-
-    /** Food images */
-    private BufferedImage[] foodImages = {
-        imageSheet.getSubimage(33, 17, 16, 16), //eggs
-        imageSheet.getSubimage(33, 0, 16, 16), //beer
-        imageSheet.getSubimage(50, 0, 16, 16), //pepper
-        imageSheet.getSubimage(33, 34, 16, 16)  //steak
-    };
-
-    /** Wall images */
-    private BufferedImage[] wallImages = {
-        imageSheet.getSubimage(0, 0, 32, 32),
-        imageSheet.getSubimage(0, 0, 32, 64),
-        imageSheet.getSubimage(0, 0, 32, 96)
-    };
-
-
 
     /**
      * Create SnakeDisplay and associate it with game manager
@@ -71,6 +46,7 @@ public class SnakeDisplay extends JPanel{
      */
     public SnakeDisplay(GameManager manager){
         this.manager = manager;
+        spriteManager = new SpriteManager();
         drawWidth = TILE_DRAW_LENGTH*manager.getGridWidth();
         drawHeight = TILE_DRAW_LENGTH*manager.getGridHeight();
         setPreferredSize(new Dimension(drawWidth, drawHeight));
@@ -113,31 +89,16 @@ public class SnakeDisplay extends JPanel{
 
                 if(coorType.equals("f")){
                     int foodIndex = ((Food)obj).getID();
-                    g.drawImage(foodImages[foodIndex], x0, y0, TILE_DRAW_LENGTH,
+                    g.drawImage(spriteManager.getFoodSprite(foodIndex), x0, y0, TILE_DRAW_LENGTH,
                                 TILE_DRAW_LENGTH , null);
                 }
                 else if(coorType.equals("X")){
                     //TODO make reliable way to get same images for walls
                     int wallIndex = (int)(coorObj.getX() + coorObj.getY())%NUM_WALL_IMAGES;
-                    g.drawImage(wallImages[wallIndex], x0, y0, TILE_DRAW_LENGTH,
+                    g.drawImage(spriteManager.getWallSprite(wallIndex), x0, y0, TILE_DRAW_LENGTH,
                             TILE_DRAW_LENGTH, null);
                 }
             }
         }
     }
-
-    public BufferedImage getImage(String imageName){
-        BufferedImage image = null;
-        ClassLoader cl = getClass().getClassLoader();
-        InputStream in = cl.getResourceAsStream(imageName);
-        try {
-            image = ImageIO.read(in);
-            setPreferredSize(new Dimension(image.getWidth(null),
-                                           image.getHeight(null)));
-        }catch (IOException ex) {
-            System.err.println("Error loading: " + imageName);
-        }
-        return image;
-    }
-
 }
